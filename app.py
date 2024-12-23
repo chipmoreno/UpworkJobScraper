@@ -6,10 +6,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-@app.route('/jobs')
-def jobs():
     job_list = []
     job_data = scraper()  # Call the scrape function from scraper.py
     #return jsonify(job_data)
@@ -26,7 +22,7 @@ def jobs():
                 'link': link
             })
         
-    return job_list
+    return render_template('index.html', jobs=job_list)
 
 if __name__ == '__main__':
     app.run(debug=True)
