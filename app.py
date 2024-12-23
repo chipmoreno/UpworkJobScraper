@@ -12,7 +12,7 @@ def index():
     for job in job_data.values():
         title = job.get('title')
         time_posted = job.get('time_posted')
-        description = job.get('description')[:100]  # Get the first 100 characters
+        description = job.get('description')
         link = job.get('link')
 
         job_list.append({
