@@ -46,11 +46,11 @@ def scraper():
         print(f"{job_id}: {job_data[job_id]['title']}\n")
     return job_data
 scraper()
-'''Ideas:
+'''
+Ideas:
 
-
-- Program needs deploy data from each run into a user interface or feed application. 
+- Deploy data to UI/Feed Outside Of Terminal
+- Automate recurring program runs/updating of dictionary
 - Accept front-end input for search query(s) 
-
 
 '''
