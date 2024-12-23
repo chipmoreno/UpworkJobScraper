@@ -20,7 +20,14 @@ def scraper():
         job_id = generate_id()
         title_element = job_tile.find('a', {'data-test': 'job-tile-title-link UpLink'})
         title = title_element.get_text(strip=True) if title_element else None
-        description = job_tile.find('p', {'class': 'mb-0 text-body-sm'}).get_text(strip=True)
+
+        description = job_tile.find('p', {'class': 'mb-0 text-body-sm'})
+        if description:
+            description = description.get_text(strip=True)
+        else:
+            description = job_tile.find('div', {'class': 'text-body-sm'})
+            description = description.get_text(strip=True) if description else None
+
         budget = job_tile.find('li', {'data-test': 'job-type-label'}).get_text(strip=True)
         posted = job_tile.find('small', {'data-test': 'job-pubilshed-date'}).get_text(strip=True)
         category = job_tile.find('button', {'data-test': 'token'}).get_text(strip=True)
@@ -29,7 +36,6 @@ def scraper():
         experience_level = job_tile.find('div', {'class': 'experience-level'}).get_text(strip=True) if job_tile.find('div', {'class': 'experience-level'}) else None
         duration = job_tile.find('div', {'class': 'duration-label'}).get_text(strip=True) if job_tile.find('div', {'class': 'duration-label'}) else None
         total_spent = job_tile.find('div', {'class': 'total-spent'}).get_text(strip=True) if job_tile.find('div', {'class': 'total-spent'}) else None
-        description = job_tile.find('div', {'class': 'text-body-sm'}).get_test(strip=True) if job_tile.find('div', {'classl': 'text-body-sm'}) else None
         
         job_data[job_id] = {
             'title':title,
