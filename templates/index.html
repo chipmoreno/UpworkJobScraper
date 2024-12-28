@@ -5,101 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .job-card {
-            background-color: #fafafa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .job-card h2 {
-            margin: 0 0 10px;
-            color: #0073e6;
-            font-size: 18px; /* Reduced size */
-        }
-        .job-card .time {
-            font-size: 14px;
-            color: #777;
-            margin-bottom: 10px;
-        }
-        .job-card .description {
-            font-size: 16px;
-            color: #444;
-            margin-bottom: 10px;
-        }
-        .job-card a {
-            font-weight: bold;
-            color: #0073e6;
-            text-decoration: none;
-        }
-        .job-card a:hover {
-            text-decoration: underline;
-        }
-        .expand-btn {
-            background-color: #0073e6;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 14px;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .expand-btn:hover {
-            background-color: #005bb5;
-        }
-        .full-description {
-            display: none;
-            font-size: 16px;
-            color: #444;
-        }
+        /* Your existing CSS */
     </style>
-<script>
-    function toggleDescription(jobId) {
-        var desc = document.getElementById('desc-' + jobId);
-        var btn = document.getElementById('btn-' + jobId);
-        if (desc.style.display === "none" || desc.style.display === "") {
-            desc.style.display = "block";
-            btn.textContent = "Collapse Description";
-        } else {
-            desc.style.display = "none";
-            btn.textContent = "Expand Description";
+    <script>
+        function toggleDescription(jobId) {
+            var desc = document.getElementById('desc-' + jobId);
+            var shortDesc = document.getElementById('short-desc-' + jobId);
+            var btn = document.getElementById('btn-' + jobId);
+
+            if (desc.style.display === "none") {
+                desc.style.display = "block";
+                shortDesc.style.display = "none";
+                btn.textContent = "↑ Collapse Description";
+            } else {
+                desc.style.display = "none";
+                shortDesc.style.display = "block";
+                btn.textContent = "↓ Expand Description";
+            }
         }
-    }
-</script>
+    </script>
 </head>
 <body>
 
 <div class="container">
     <h1>Job Listings</h1>
+    
+    <!-- Descriptive Summary Section -->
+    <h2>Job Category Distribution</h2>
+    <ul>
+        {% for category, count in category_counts.items() %}
+            <li>{{ category }}: {{ count }} jobs</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Experience Level Distribution</h2>
+    <ul>
+        {% for level, count in experience_level_counts.items() %}
+            <li>{{ level }}: {{ count }} jobs</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Average Budget per Category</h2>
+    <ul>
+        {% for category, avg_budget in avg_budget_by_category.items() %}
+            <li>{{ category }}: ${{ avg_budget|round(2) }} (avg budget)</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Job Listings Section -->
+    <h2>Job Listings</h2>
     {% if jobs %}
         {% for job in jobs %}
             <div class="job-card">
-                <h2><a href="{{ job.link }}" target="_blank">{{ job.title }}</a></h2>
                 <p class="time">Posted: {{ job.time_posted }}</p>
-                <p class="description">{{ job.description[:100] }}...</p>
-                <button class="expand-btn" id="btn-{{ loop.index }}" onclick="toggleDescription({{ loop.index }})">Expand Description</button>
-                <div class="full-description" id="desc-{{ loop.index }}">
-                    <p>{{ job.description }}</p>
+                <h2><a href="{{ job.link }}" target="_blank">{{ job.title }}</a></h2>
+                <p id="short-desc-{{ loop.index }}" class="short-description">{{ job.description[:100] }}...</p> <!-- Truncated version -->
+                <div id="desc-{{ loop.index }}" class="full-description">
+                    <p>{{ job.description }}</p> <!-- Full version -->
                 </div>
+                <button class="expand-btn" id="btn-{{ loop.index }}" onclick="toggleDescription({{ loop.index }})">↓ Expand Description</button>
             </div>
         {% endfor %}
     {% else %}
