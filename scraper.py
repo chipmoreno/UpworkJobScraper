@@ -27,22 +27,38 @@ def scraper():
         else:
             description = job_tile.find('div', {'class': 'text-body-sm'})
             description = description.get_text(strip=True) if description else None
+        
+        budget = "Not available"
 
+        # Try to get the fixed-price budget
         budget_element = job_tile.find('li', {'data-test': 'is-fixed-price'})
         if budget_element:
+            # Extract fixed-price budget
             budget = budget_element.find_all('strong')[1].get_text(strip=True)
         else:
-            # Check for hourly budget
+            # If no fixed-price budget, check for hourly budget
             hourly_element = job_tile.find('li', {'data-test': 'job-type-label'})
             if hourly_element and 'Hourly' in hourly_element.get_text(strip=True):
-                budget = hourly_element.find('strong').get_text(strip=True)
-            else:
-                budget = "Not available"
+                # Extract hourly budget
+                budget_text = hourly_element.find('strong').get_text(strip=True)
+                budget = budget_text.replace('Hourly: ', '')  # Remove 'Hourly: ' part
+
+        # Convert budget to float if it's a valid numeric value
+        try:
+            if budget != "Not available":
+                # Remove any non-numeric characters (like '$') before converting to float
+                budget = float(budget.replace('$', '').replace(',', ''))
+        except ValueError:
+            budget = "Not available"  # If conversion fails, assign "Not available"
 
         print(budget)
 
         posted = job_tile.find('small', {'data-test': 'job-pubilshed-date'}).get_text(strip=True)
-        category = job_tile.find('button', {'data-test': 'token'}).get_text(strip=True)
+        category_element = job_tile.find('button', {'data-test': 'token'})
+        if category_element:
+            category = category_element.get_text(strip=True)
+        else:
+            category = "Not available"
         link = f"https://upwork.com{title_element['href']}" if title_element else None
         type = job_tile.find('div', {'class': 'job-type-label'}).get_text(strip=True) if job_tile.find('div', {'class': 'job-type-label'}) else None
         experience_level = job_tile.find('div', {'class': 'experience-level'}).get_text(strip=True) if job_tile.find('div', {'class': 'experience-level'}) else None
