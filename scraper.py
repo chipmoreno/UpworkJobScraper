@@ -28,7 +28,19 @@ def scraper():
             description = job_tile.find('div', {'class': 'text-body-sm'})
             description = description.get_text(strip=True) if description else None
 
-        budget = job_tile.find('li', {'data-test': 'job-type-label'}).get_text(strip=True)
+        budget_element = job_tile.find('li', {'data-test': 'is-fixed-price'})
+        if budget_element:
+            budget = budget_element.find_all('strong')[1].get_text(strip=True)
+        else:
+            # Check for hourly budget
+            hourly_element = job_tile.find('li', {'data-test': 'job-type-label'})
+            if hourly_element and 'Hourly' in hourly_element.get_text(strip=True):
+                budget = hourly_element.find('strong').get_text(strip=True)
+            else:
+                budget = "Not available"
+
+        print(budget)
+
         posted = job_tile.find('small', {'data-test': 'job-pubilshed-date'}).get_text(strip=True)
         category = job_tile.find('button', {'data-test': 'token'}).get_text(strip=True)
         link = f"https://upwork.com{title_element['href']}" if title_element else None
