@@ -44,7 +44,7 @@
                 <a href="{{ job['link'] }}" target="_blank">{{ job['title'] }}</a><br />
                 <strong>Posted:</strong> {{ job['time_posted'] }}<br />
                 <strong>Description:</strong> {{ job['description'] }}<br />
-                <strong>Budget:</strong> {{ job.get('budget', 'N/A') }}<br />
+                <strong>Budget:</strong> {{ job.get('budget') }}<br />
             </li>
         {% endfor %}
     </ul>

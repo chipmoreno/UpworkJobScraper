@@ -32,12 +32,14 @@ def index():
         time_posted = job.get('time_posted')
         description = job.get('description')
         link = job.get('link')
+        budget = job.get('budget')
 
         job_list.append({
                 'title': title,
                 'time_posted': time_posted,
                 'description': description,
-                'link': link
+                'link': link,
+                'budget': budget
             })
 
     category_counts, experience_level_counts, avg_budget_by_category = summarize_jobs(job_data)
