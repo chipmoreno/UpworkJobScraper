@@ -4,36 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
 </head>
 <body>
     <h1>Job Listings</h1>
 
-    <!-- Form to define user filtering criteria -->
     <form method="POST" action="/">
-        <label for="keywords">Keywords (comma-separated):</label>
-        <input type="text" id="keywords" name="keywords" placeholder="e.g., Python, Data Science" />
-
-        <br />
-
-        <label for="min_budget">Min Budget:</label>
-        <input type="number" id="min_budget" name="min_budget" placeholder="e.g., 1000" />
-
-        <br />
-
-        <label for="max_budget">Max Budget:</label>
-        <input type="number" id="max_budget" name="max_budget" placeholder="e.g., 5000" />
-
-        <br />
-
-        <label for="experience_levels">Experience Level:</label>
-        <select id="experience_levels" name="experience_levels" multiple>
+        <label>Keywords:</label>
+        <input type="text" name="keywords" placeholder="e.g., Python, Data Science" /><br />
+        
+        <label>Min Budget:</label>
+        <input type="number" name="min_budget" placeholder="e.g., 1000" /><br />
+        
+        <label>Max Budget:</label>
+        <input type="number" name="max_budget" placeholder="e.g., 5000" /><br />
+        
+        <label>Experience Level:</label>
+        <select name="experience_levels" multiple>
             <option value="Junior">Junior</option>
             <option value="Mid">Mid</option>
             <option value="Senior">Senior</option>
-        </select>
-
-        <br />
-
+        </select><br />
+        
         <button type="submit">Filter Jobs</button>
     </form>
 
@@ -41,10 +33,10 @@
     <ul>
         {% for job in jobs %}
             <li>
-                <a href="{{ job['link'] }}" target="_blank">{{ job['title'] }}</a><br />
-                <strong>Posted:</strong> {{ job['time_posted'] }}<br />
-                <strong>Description:</strong> {{ job['description'] }}<br />
-                <strong>Budget:</strong> {{ job.get('budget') }}<br />
+                <a href="{{ job.link }}" target="_blank">{{ job.title }}</a><br />
+                <strong>Posted:</strong> {{ job.time_posted }}<br />
+                <strong>Description:</strong> {{ job.description }}<br />
+                <strong>Budget:</strong> {{ job.budget or "N/A" }}<br />
             </li>
         {% endfor %}
     </ul>
@@ -56,18 +48,39 @@
         {% endfor %}
     </ul>
 
-    <h3>Experience Level Counts</h3>
-    <ul>
-        {% for level, count in experience_level_counts.items() %}
-            <li>{{ level }}: {{ count }}</li>
-        {% endfor %}
-    </ul>
+    <h3>Category Counts Chart</h3>
+    <canvas id="categoryChart" width="400" height="200"></canvas>
 
-    <h3>Average Budget by Category</h3>
-    <ul>
-        {% for category, avg_budget in avg_budget_by_category.items() %}
-            <li>{{ category }}: ${{ avg_budget }}</li>
-        {% endfor %}
-    </ul>
+    <script>
+        // Data from server-side template (replace with your actual data)
+        const categoryCounts = JSON.parse('{{ category_counts | tojson }}');
+
+        // Extract categories and counts
+        const categories = Object.keys(categoryCounts);
+        const counts = Object.values(categoryCounts);
+
+        // Render the bar chart
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: categories,
+                datasets: [{
+                    label: 'Category Counts',
+                    data: counts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
