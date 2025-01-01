@@ -3,6 +3,10 @@ from scraper import scraper
 from descriptive import *
 from prescriptive import *
 from featurizing import *
+from data_exploration import *
+from flask import jsonify
+import json
+
 
 app = Flask(__name__)
 
@@ -55,7 +59,8 @@ def index():
                 'experience_level': experience_level,
                 'budgetCategory': budgetCategory
             })
-    return render_template('index.html', jobs=job_list)
+        summary = summarize_data(job_data)
+    return render_template('index.html', jobs=job_list, summary=summary)
 
 @app.route('/recent_jobs')
 def recent_jobs_page():
@@ -83,6 +88,21 @@ def jobs_above_budget():
     jobs = prescribe_jobs_above_budget(job_data, budget_threshold)
 
     return render_template('jobs_above_budget.html', jobs=jobs)
+
+@app.route('/visualize', methods=['GET'])
+def visualize():
+    if USE_DEFAULTS:
+        job_data = default_job_data
+    else:
+        job_data = scraper()
+    
+    # Convert job data into a string that JavaScript can use
+    jobs_str = ""
+    for job in job_data.values():
+        jobs_str += f"{job['title']}:{job['budget']}|"
+    
+    return render_template('visualize.html', jobs_data=jobs_str)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

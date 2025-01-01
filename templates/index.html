@@ -37,6 +37,26 @@
             margin-right: 10px;
         }
     </style>
+
+<br><br>
+<a href="/visualize">Visualize: Visualize Job Budgets</a>
+<style>
+    .description {
+        display: none;
+    }
+    .toggle-btn {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+        border: none;
+        background: none;
+    }
+    .job-details {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
 </head>
 <body>
     <h1>Job Listings</h1>
@@ -64,5 +84,10 @@
             }
         }
     </script>
+
+    <h2>Job Summary using Data Exploration & Preparation</h2>
+    <ul>
+        <li>Average Budget: {{ summary }}</li>
+    </ul>
 </body>
 </html>
