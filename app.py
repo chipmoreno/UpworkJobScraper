@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, Response
 from scraper import scraper
 from descriptive import *
 from prescriptive import *
@@ -11,6 +11,29 @@ from evaluate_accuracy import *
 
 
 app = Flask(__name__)
+
+# Basic credentials (for demo purposes only)
+USERNAME = "admin"
+PASSWORD = "password"
+
+# Basic Authentication function
+def check_auth(username, password):
+    return username == USERNAME and password == PASSWORD
+
+# Authenticate function
+def authenticate():
+    return Response(
+    'Unauthorized access. Please provide a valid username and password.',
+    401,
+    {'WWW-Authenticate': 'Basic realm="Login required"'}
+)
+
+# Basic security check for each request
+@app.before_request
+def before_request():
+    if not request.authorization or not check_auth(request.authorization.username, request.authorization.password):
+        return authenticate()
+
 
 USE_DEFAULTS = True  # Set this to True to use default data, False to scrape
 
