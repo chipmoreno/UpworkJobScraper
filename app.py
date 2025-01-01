@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 from scraper import scraper
 from descriptive import *
+from prescriptive import *
+
 app = Flask(__name__)
 
 USE_DEFAULTS = True  # Set this to True to use default data, False to scrape
@@ -62,6 +64,22 @@ def recent_jobs_page():
         job_data = scraper()
     recent_jobs = get_recent_jobs(job_data)  # Filter jobs from last 10 minutes
     return render_template('recent_jobs.html', recent_jobs=recent_jobs)
+
+@app.route('/jobs_above_budget/', methods=['GET'])
+def jobs_above_budget():
+    if USE_DEFAULTS:
+        # Use default data for debugging
+        job_data = default_job_data
+    else:
+        # Scrape the data if USE_DEFAULTS is set to False
+        job_data = scraper()
+    # Get the budget threshold from the URL query parameter
+    budget_threshold = request.args.get('budget', default=0, type=int)
+
+    # Get the jobs above the threshold using the prescribed function
+    jobs = prescribe_jobs_above_budget(job_data, budget_threshold)
+
+    return render_template('jobs_above_budget.html', jobs=jobs)
 
 if __name__ == '__main__':
     app.run(debug=True)

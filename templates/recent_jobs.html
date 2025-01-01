@@ -1,0 +1,20 @@
+<!-- recent_jobs.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs Posted in the Last 10 Minutes</title>
+</head>
+<body>
+    <h1>Jobs Posted in the Last 10 Minutes</h1>
+    <a href="/">Back to All Jobs</a>
+
+    <!-- Display only recent jobs -->
+    <ul>
+        {% for job in recent_jobs %}
+            <li>{{ job['title'] }} - {{ job['time_posted'] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

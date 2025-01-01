@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Search</title>
+</head>
+
+<body>    
+    <form action="/jobs_above_budget/" method="get" style="display: inline;">
+        <label for="budget" style="display: inline; margin-right: 5px;">Prescriptive Method: Search Jobs Above Budget: </label>
+        <input type="number" id="budget" name="budget" required style="display: inline; margin-right: 5px;">
+        <button type="submit" style="display: inline;">Search</button>
+    </form>
+</body>
+</html>
+
+    <br><br>
+    <a href="/recent_jobs">Descriptive Method: View Jobs Posted in the Last 10 Minutes</a>
     <style>
         .description {
             display: none;
