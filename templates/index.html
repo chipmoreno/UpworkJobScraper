@@ -4,83 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
+    <style>
+        .description {
+            display: none;
+        }
+        .toggle-btn {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+            border: none;
+            background: none;
+        }
+        .job-details {
+            display: inline-block;
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Job Listings</h1>
-
-    <form method="POST" action="/">
-        <label>Keywords:</label>
-        <input type="text" name="keywords" placeholder="e.g., Python, Data Science" /><br />
-        
-        <label>Min Budget:</label>
-        <input type="number" name="min_budget" placeholder="e.g., 1000" /><br />
-        
-        <label>Max Budget:</label>
-        <input type="number" name="max_budget" placeholder="e.g., 5000" /><br />
-        
-        <label>Experience Level:</label>
-        <select name="experience_levels" multiple>
-            <option value="Junior">Junior</option>
-            <option value="Mid">Mid</option>
-            <option value="Senior">Senior</option>
-        </select><br />
-        
-        <button type="submit">Filter Jobs</button>
-    </form>
-
-    <h2>Filtered Job Listings</h2>
     <ul>
         {% for job in jobs %}
-            <li>
-                <a href="{{ job.link }}" target="_blank">{{ job.title }}</a><br />
-                <strong>Posted:</strong> {{ job.time_posted }}<br />
-                <strong>Description:</strong> {{ job.description }}<br />
-                <strong>Budget:</strong> {{ job.budget or "N/A" }}<br />
-            </li>
+        <li>
+            <h3><a href="{{ job.link }}" target="_blank">{{ job.title }}</a></h3>
+            <div class="job-details">
+                <p><strong>Elapsed Time Since Posting:</strong> {{ job.elapsed }} | 
+                <strong>Budget:</strong> {{ job.budget }} | 
+                <strong>Experience Level:</strong> {{ job.experience_level }}</p>
+            </div>
+            <button class="toggle-btn" onclick="toggleDescription('{{ loop.index }}')">Show Description</button>
+            <p id="description-{{ loop.index }}" class="description">{{ job.description }}</p>
+        </li>
         {% endfor %}
     </ul>
-
-    <h3>Category Counts</h3>
-    <ul>
-        {% for category, count in category_counts.items() %}
-            <li>{{ category }}: {{ count }}</li>
-        {% endfor %}
-    </ul>
-
-    <h3>Category Counts Chart</h3>
-    <canvas id="categoryChart" width="400" height="200"></canvas>
-
     <script>
-        // Data from server-side template (replace with your actual data)
-        const categoryCounts = JSON.parse('{{ category_counts | tojson }}');
-
-        // Extract categories and counts
-        const categories = Object.keys(categoryCounts);
-        const counts = Object.values(categoryCounts);
-
-        // Render the bar chart
-        const ctx = document.getElementById('categoryChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: categories,
-                datasets: [{
-                    label: 'Category Counts',
-                    data: counts,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+        function toggleDescription(id) {
+            const desc = document.getElementById('description-' + id);
+            if (desc.style.display === 'none') {
+                desc.style.display = 'block';
+            } else {
+                desc.style.display = 'none';
             }
-        });
+        }
     </script>
 </body>
 </html>
