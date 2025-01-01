@@ -7,6 +7,7 @@ from data_exploration import *
 from flask import jsonify
 import json
 from model import *
+from evaluate_accuracy import *
 
 
 app = Flask(__name__)
@@ -117,7 +118,16 @@ def ml_visualize():
     return render_template("ml.html", jobs=default_job_data, predictions=predictions)
 
 
+@app.route('/accuracy')
+def accuracy():
+    # Fetch the job data
+    if USE_DEFAULTS:
+        job_data = default_job_data
+    else:
+        job_data = scraper()
 
+    # Render the accuracy page and pass the job data for inspection
+    return render_template('accuracy.html', job_data=job_data)
 
 
 if __name__ == '__main__':
