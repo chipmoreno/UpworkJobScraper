@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Predictions</title>
+</head>
+<body>
+    <h1>Job Predictions</h1>
+    <form method="post">
+        <button type="submit">Get Predictions</button>
+    </form>
+    <ul>
+        {% for job_id, job in jobs.items() %}
+            <li>
+                <h3>{{ job.title }}</h3>
+                <p>{{ job.description }}</p>
+                <p>Budget: {{ job.budget }}</p>
+                <p>Elapsed: {{ job.elapsed }}</p>
+                <p>Experience: {{ job.experience_level }}</p>
+                <p>Prediction: {{ predictions.get(job_id, "No prediction yet") }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

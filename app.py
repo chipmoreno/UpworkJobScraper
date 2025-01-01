@@ -6,6 +6,7 @@ from featurizing import *
 from data_exploration import *
 from flask import jsonify
 import json
+from model import *
 
 
 app = Flask(__name__)
@@ -102,6 +103,21 @@ def visualize():
         jobs_str += f"{job['title']}:{job['budget']}|"
     
     return render_template('visualize.html', jobs_data=jobs_str)
+
+class SimpleML:
+    def predict(self, job):
+        budget = float(job["budget"])
+        elapsed = sum(int(x) * 60 ** i for i, x in enumerate(reversed(job["elapsed"].split(":"))))
+        experience = 2 if job["experience_level"] == "Expert" else 1
+        return "Apply" if budget + experience > 60 else "Skip"
+
+@app.route('/ml', methods=['GET', 'POST'])
+def ml_visualize():
+    predictions = {job_id: SimpleML().predict(job) for job_id, job in default_job_data.items()} if request.method == "POST" else {}
+    return render_template("ml.html", jobs=default_job_data, predictions=predictions)
+
+
+
 
 
 if __name__ == '__main__':
