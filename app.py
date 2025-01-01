@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from scraper import scraper
 from descriptive import *
 from prescriptive import *
+from featurizing import *
 
 app = Flask(__name__)
 
@@ -41,6 +42,7 @@ def index():
         title = job.get('title', '')
         description = job.get('description', '')
         budget = job.get('budget', '0')
+        budgetCategory = categorize_budget((budget))
         experience_level = job.get('experience_level', 'Unknown')
         elapsed = job.get('elapsed')
         link = job.get('link')
@@ -50,7 +52,8 @@ def index():
                 'description': description,
                 'link': link,
                 'budget': budget,
-                'experience_level': experience_level
+                'experience_level': experience_level,
+                'budgetCategory': budgetCategory
             })
     return render_template('index.html', jobs=job_list)
 

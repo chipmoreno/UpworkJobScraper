@@ -46,7 +46,7 @@
             <h3><a href="{{ job.link }}" target="_blank">{{ job.title }}</a></h3>
             <div class="job-details">
                 <p><strong>Elapsed Time Since Posting:</strong> {{ job.elapsed }} | 
-                <strong>Budget:</strong> {{ job.budget }} | 
+                <strong>Budget:</strong> {{ job.budget }} {{ job.budgetCategory }} | 
                 <strong>Experience Level:</strong> {{ job.experience_level }}</p>
             </div>
             <button class="toggle-btn" onclick="toggleDescription('{{ loop.index }}')">Show Description</button>
