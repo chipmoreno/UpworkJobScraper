@@ -10,9 +10,9 @@
     <pre id="ascii-bars"></pre>
 
     <script>
-        var jobs_data = "{{ jobs_data }}";
+        var jobs_data = "{{ job_str }}";
         var asciiBars = '';
-        var jobs = jobs_data.split('|');
+        var jobs = job_str.split('|');
         
         jobs.forEach(function(job) {
             if (job) {

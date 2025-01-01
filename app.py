@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, Response
+from flask import Flask, render_template, request, redirect, Response, g
 from scraper import scraper
 from descriptive import *
 from prescriptive import *
@@ -8,11 +8,25 @@ from flask import jsonify
 import json
 from model import *
 from evaluate_accuracy import *
+from time import time
 
 
 app = Flask(__name__)
 
-# Basic credentials (for demo purposes only)
+# The following lines are tools to monitor and maintain the product 
+
+@app.before_request
+def log_request():
+    g.start = time()
+
+@app.after_request
+def log_response(response):
+    if hasattr(g, 'start'):
+        duration = time() - g.start
+        print(f"Request took {duration:.2f} seconds")
+    return response
+
+# The following lines are a basic security feature
 USERNAME = "admin"
 PASSWORD = "password"
 
@@ -141,7 +155,7 @@ def ml_visualize():
     return render_template("ml.html", jobs=default_job_data, predictions=predictions)
 
 
-@app.route('/accuracy')
+@app.route('/accuracy', methods=['GET'])
 def accuracy():
     # Fetch the job data
     if USE_DEFAULTS:
@@ -152,6 +166,41 @@ def accuracy():
     # Render the accuracy page and pass the job data for inspection
     return render_template('accuracy.html', job_data=job_data)
 
+@app.route('/dashboard')
+def dashboard():
+    if USE_DEFAULTS:
+        job_data = default_job_data
+    else:
+        job_data = scraper()  # Assuming scraper() provides job data
+    experience_levels = {'Beginner': 0, 'Intermediate': 0, 'Expert': 0}
+    beginnerCount = 0
+    intermediateCount = 0
+    expertCount = 0
+    for job in job_data.values():
+        if(job['experience_level']) == 'Beginner':
+            beginnerCount += 1
+        elif(job['experience_level']) == 'Intermediate':
+            intermediateCount += 1
+        elif(job['experience_level']) == 'Expert':
+            expertCount +=1
+    budgets = [float(job["budget"]) for job in job_data.values()]
+    elapsed_times = [
+        sum(int(x) * 60 ** i for i, x in enumerate(reversed(job["elapsed"].split(":"))))
+        for job in job_data.values()
+    ]   
+
+    lessThan1Hour=0
+    greaterThan1Hour=0
+    for job in job_data.values():
+        elapsed_seconds = sum(int(x) * 60 ** i for i, x in enumerate(reversed(job["elapsed"].split(":"))))
+        
+        # Categorize elapsed time into ranges
+        if elapsed_seconds < 3600:
+            lessThan1Hour += 1
+        elif 3600 <= elapsed_seconds:
+            greaterThan1Hour += 1
+        
+    return render_template('dashboard.html', job_data=job_data, budgets=budgets, experience_levels=experience_levels, elapsed_times=elapsed_times, beginnerCount = beginnerCount, intermediateCount = intermediateCount, expertCount = expertCount, lessThan1Hour = lessThan1Hour, greaterThan1Hour=greaterThan1Hour)
 
 if __name__ == '__main__':
     app.run(debug=True)
