@@ -27,6 +27,8 @@ def scraper():
 
         # Try to get the fixed-price budget
         budget_element = job_tile.find('li', {'data-test': 'is-fixed-price'})
+        if budget_element == 'Hourly':
+            budget = 0
         if budget_element:
             # Extract fixed-price budget
             budget = budget_element.find_all('strong')[1].get_text(strip=True)
@@ -45,7 +47,9 @@ def scraper():
                         budget = sum(budget_values) / 2  # Calculate midpoint for hourly range
                 else:
                     # If it's a single value, just clean and convert it
-                    budget = float(budget_text.replace('$', '').replace(',', '').strip())
+                    print(budget)
+                    #budget = float(budget_text.replace('$', '').replace(',', '').strip())
+                    budget = 0
 
         # Convert budget to float if it's a valid numeric value
         try:
@@ -55,27 +59,24 @@ def scraper():
         except ValueError:
             budget = "Not available"  # If conversion fails, assign "Not available"
 
-        posted_times = soup.find_all('small', {'data-test': 'job-pubilshed-date'})
-        def convert_to_seconds(posted_time):
-            if 'minute' in posted_time:
-                minutes = int(posted_time.split(' ')[0])  # Get the number of minutes
-                return minutes * 60  # Convert minutes to seconds
-            elif 'hour' in posted_time:
-                hours = int(posted_time.split(' ')[0])  # Get the number of hours
-                return hours * 3600  # Convert hours to seconds
-            return 0  # Return 0 if the time format is unrecognized
-
-        def format_time(seconds):
-            """Format seconds to HH:MM:SS format."""
-            hours = seconds // 3600
-            minutes = (seconds % 3600) // 60
-            seconds = seconds % 60
-            return f"{hours:02}:{minutes:02}:{seconds:02}"
-
-        for time_element in posted_times:
-            time_text = time_element.find_all('span')[1].text.strip()  # Get the "X minutes ago" or "X hour ago" text
-            seconds = convert_to_seconds(time_text)  # Convert to seconds
-            elapsed = format_time(seconds)  # Format the time to HH:MM:SS
+        elapsed = job_tile.find('small', {'data-test': 'job-pubilshed-date'})
+        print (f"Elapsed Step 1, raw dump from scrape: {elapsed}")
+        elapsed = elapsed.text.strip()  # Get the text from the first element
+        print(f"Elapsed step 2 stripping from raw dump: {elapsed}")
+        hours, minutes, seconds = 0, 0, 0
+        if 'second' in elapsed:
+            seconds = int([word for word in elapsed.split() if word.isdigit()][0])
+            print (f"Seconds:  {seconds}")
+            elapsed = f"{hours:02}:{minutes:02}:{seconds:02}"
+        if 'minute' in elapsed:
+            minutes = int([word for word in elapsed.split() if word.isdigit()][0])
+            (f"Minutes:  {minutes}")
+            elapsed = f"{hours:02}:{minutes:02}:{seconds:02}"
+        if 'hour' in elapsed:
+            hours = int([word for word in elapsed.split() if word.isdigit()][0])
+            (f"Hours:  {hours}")
+            elapsed = f"{hours:02}:{minutes:02}:{seconds:02}"
+        print(f"Elapsed Step 4 After Final Assignment: {elapsed}")
 
         link = f"https://upwork.com{title_element['href']}" if title_element else None
         experience_level = job_tile.find('li', {'data-test': 'experience-level'}).get_text(strip=True) if job_tile.find('li', {'data-test': 'experience-level'}) else None
