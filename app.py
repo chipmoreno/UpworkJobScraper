@@ -72,6 +72,8 @@ default_job_data = {
     # Add more sample jobs if needed
 }
 
+current_job_data = default_job_data.copy()
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     job_list = []
@@ -85,7 +87,10 @@ def index():
         title = job.get('title', '')
         description = job.get('description', '')
         budget = job.get('budget', '0')
-        budgetCategory = categorize_budget((budget))
+        if budget != 'Not available':
+            budgetCategory = categorize_budget((budget))
+        else: 
+            budgetCategory = "Unknown"
         experience_level = job.get('experience_level', 'Unknown')
         elapsed = job.get('elapsed')
         link = job.get('link')
@@ -165,6 +170,19 @@ def accuracy():
 
     # Render the accuracy page and pass the job data for inspection
     return render_template('accuracy.html', job_data=job_data)
+
+@app.route('/scrape', methods=['GET', 'POST'])
+def scrape():
+    global current_job_data
+    scraped_data = scraper()
+
+    if request.method == 'POST':
+        overwrite = request.form.get('overwrite')  # 'yes' or 'no'
+        if overwrite == 'yes':
+            current_job_data = scraped_data  # Overwrite with scraped data
+        return redirect('/')  # Redirect to index
+
+    return render_template('scrape.html', scraped_data=scraped_data, default_data=default_job_data)
 
 @app.route('/dashboard')
 def dashboard():

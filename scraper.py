@@ -2,7 +2,6 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
 from pprint import pprint
-from RandGen import *
 
 def scraper():
     driver = webdriver.Chrome()
@@ -10,13 +9,10 @@ def scraper():
     time.sleep(5)
     html = driver.page_source
     driver.quit()
-
-    # Parse the page source
     soup = BeautifulSoup(html, 'html.parser')
-    job_tiles = soup.find_all('article', {'data-test': 'JobTile'})
-    job_data = {}
+    job_tiles = soup.find_all('article', {'data-test': 'JobTile'})[:5]
+    job_data = []
     for job_tile in job_tiles:
-        job_id = generate_id()
         title_element = job_tile.find('a', {'data-test': 'job-tile-title-link UpLink'})
         title = title_element.get_text(strip=True) if title_element else None
 
@@ -72,36 +68,15 @@ def scraper():
             seconds = convert_to_seconds(time_text)  # Convert to seconds
             elapsed = format_time(seconds)  # Format the time to HH:MM:SS
 
-        category_element = job_tile.find('button', {'data-test': 'token'})
-        if category_element:
-            category = category_element.get_text(strip=True)
-        else:
-            category = "Not available"
         link = f"https://upwork.com{title_element['href']}" if title_element else None
-        type = job_tile.find('div', {'class': 'job-type-label'}).get_text(strip=True) if job_tile.find('div', {'class': 'job-type-label'}) else None
         experience_level = job_tile.find('li', {'data-test': 'experience-level'}).get_text(strip=True) if job_tile.find('li', {'data-test': 'experience-level'}) else None
-        duration = job_tile.find('div', {'class': 'duration-label'}).get_text(strip=True) if job_tile.find('div', {'class': 'duration-label'}) else None
-        total_spent = job_tile.find('div', {'class': 'total-spent'}).get_text(strip=True) if job_tile.find('div', {'class': 'total-spent'}) else None
         
-        job_data[job_id] = {
+        job_data.append({
             'title':title,
             'description': description,
             'budget': budget,
             'elapsed': elapsed,
-            'category': category,
             'link': link,
-            'type': type,
             'experience_level': experience_level,
-            'duration': duration,
-            'total_spent': total_spent,
-                            }
-        print(f"{job_id}: {job_data[job_id]['title']}\n")
+                            })
     return job_data
-'''
-Ideas:
-
-- Deploy data to UI/Feed Outside Of Terminal
-- Automate recurring program runs/updating of dictionary
-- Accept front-end input for search query(s) 
-
-'''
