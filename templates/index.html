@@ -107,7 +107,7 @@
                 <strong>Budget:</strong> {{ job.budget }} {{ job.budgetCategory }} | 
                 <strong>Experience Level:</strong> {{ job.experience_level }}</p>
             </div>
-            <button class="toggle-btn" onclick="toggleDescription('{{ loop.index }}')">Show Description</button>
+            <button class="toggle-btn" onclick="toggleDescription('{{ loop.index }}')">Show Description, double click</button>
             <p id="description-{{ loop.index }}" class="description">{{ job.description }}</p>
         </li>
         {% endfor %}

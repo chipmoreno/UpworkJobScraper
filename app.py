@@ -173,15 +173,30 @@ def accuracy():
 
 @app.route('/scrape', methods=['GET', 'POST'])
 def scrape():
-    global current_job_data
+    global default_job_data
     scraped_data = scraper()
-
     if request.method == 'POST':
         overwrite = request.form.get('overwrite')  # 'yes' or 'no'
-        if overwrite == 'yes':
-            current_job_data = scraped_data  # Overwrite with scraped data
+        if overwrite == "no":
+            return redirect('/')
+        if overwrite == "yes":
+            # Loop through scraped data and update the dictionary
+            for i, job_data in enumerate(scraped_data, start=1):
+                job_key = f"job{i}"  # Dynamically create job keys like job1, job2, etc.
+                # Add or overwrite job data in the dictionary
+                default_job_data[job_key] = {
+                    "title": job_data["title"],
+                    "description": job_data["description"],
+                    "budget": job_data["budget"],
+                    "elapsed": job_data["elapsed"],
+                    "link": job_data["link"],
+                    "experience_level": job_data["experience_level"]
+                }
+            
+            print("Job data has been overwritten.")
+        else:
+            print("Job data has not been overwritten.")
         return redirect('/')  # Redirect to index
-
     return render_template('scrape.html', scraped_data=scraped_data, default_data=default_job_data)
 
 @app.route('/dashboard')
