@@ -36,12 +36,21 @@ def scraper():
             if hourly_element and 'Hourly' in hourly_element.get_text(strip=True):
                 # Extract hourly budget
                 budget_text = hourly_element.find('strong').get_text(strip=True)
-                budget = budget_text.replace('Hourly: ', '')  # Remove 'Hourly: ' part
+                # Remove 'Hourly: ' from the text and split the range if needed
+                budget_text = budget_text.replace('Hourly: ', '')
+                # If it's a range, calculate the midpoint
+                if '-' in budget_text:
+                    budget_values = [float(num.replace('$', '').replace(',', '').strip()) for num in budget_text.split('-')]
+                    if len(budget_values) == 2:
+                        budget = sum(budget_values) / 2  # Calculate midpoint for hourly range
+                else:
+                    # If it's a single value, just clean and convert it
+                    budget = float(budget_text.replace('$', '').replace(',', '').strip())
 
         # Convert budget to float if it's a valid numeric value
         try:
-            if budget != "Not available":
-                # Remove any non-numeric characters (like '$') before converting to float
+            if isinstance(budget, str) and budget != "Not available":
+                # Remove any non-numeric characters (like '$' and ',') before converting to float
                 budget = float(budget.replace('$', '').replace(',', ''))
         except ValueError:
             budget = "Not available"  # If conversion fails, assign "Not available"
