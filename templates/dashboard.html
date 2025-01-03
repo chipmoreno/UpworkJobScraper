@@ -23,26 +23,7 @@
         Expert:  {{ '|' * expertCount }}
         </pre>
 
-        <h1>Job Budget Visualization</h1>
-        <pre id="ascii-bars"></pre>
-        <script>
-            var jobs_data = "{{ job_str }}";
-            var asciiBars = '';
-            var jobs = job_str.split('|');
-            
-            jobs.forEach(function(job) {
-                if (job) {
-                    var jobParts = job.split(':');
-                    var title = jobParts[0];
-                    var budget = parseInt(jobParts[1]);
-                    asciiBars += title + ': ' + '#'.repeat(budget) + '\n';
-                }
-            });
-    
-            document.getElementById('ascii-bars').textContent = asciiBars;
-        </script>
-
-    <h1>Job Budget Visualization</h1>
+    <h1>Job Posted Time Visualization</h1>
     <pre>
     Less Than 1 Hour:  {{ '|' * lessThan1Hour }}
     Greater Than 1 Hour:  {{ '|' * greaterThan1Hour }}
