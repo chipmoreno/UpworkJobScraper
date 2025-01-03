@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Search</title>
+</head>
+
+<body>    
+    <form action="/jobs_above_budget/" method="get" style="display: inline;">
+        <label for="budget" style="display: inline; margin-right: 5px;">Prescriptive Method: Search Jobs Above Budget: </label>
+        <input type="number" id="budget" name="budget" required style="display: inline; margin-right: 5px;">
+        <button type="submit" style="display: inline;">Search</button>
+    </form>
+</body>
+</html>
+
+<br><br>
+    <a href="/scrape">Scrape From Upwork & Replace Default Data</a>
+    <style>
+        .description {
+            display: none;
+        }
+        .toggle-btn {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+            border: none;
+            background: none;
+        }
+        .job-details {
+            display: inline-block;
+            margin-right: 10px;
+        }
+    </style>
+
+    <br><br>
+    <a href="/recent_jobs">Descriptive Method: View Jobs Posted in the Last 10 Minutes</a>
+    <style>
+        .description {
+            display: none;
+        }
+        .toggle-btn {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+            border: none;
+            background: none;
+        }
+        .job-details {
+            display: inline-block;
+            margin-right: 10px;
+        }
+    </style>
+
+<br><br>
+<a href="/ml">Access ML Predictions</a>
+<style>
+    .description {
+        display: none;
+    }
+    .toggle-btn {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+        border: none;
+        background: none;
+    }
+    .job-details {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
+<br><br>
+<a href="/dashboard">Access A user-friendly, functional dashboard that includes two additional visualization types</a>
+<style>
+    .description {
+        display: none;
+    }
+    .toggle-btn {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+        border: none;
+        background: none;
+    }
+    .job-details {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
+<br><br>
+<a href="/accuracy">Check Accuracy of Job Data with raw job data dump</a>
+<style>
+    .description {
+        display: none;
+    }
+    .toggle-btn {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+        border: none;
+        background: none;
+    }
+    .job-details {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
+</head>
+<body>
+    <h1>Job Listings</h1>
+    <ul>
+        {% for job in jobs %}
+        <li>
+            <h3><a href="{{ job.link }}" target="_blank">{{ job.title }}</a></h3>
+            <div class="job-details">
+                <p><strong>Elapsed Time Since Posting:</strong> {{ job.elapsed }} | 
+                <strong>Budget:</strong> {{ job.budget }} {{ job.budgetCategory }} | 
+                <strong>Experience Level:</strong> {{ job.experience_level }}</p>
+            </div>
+            <button class="toggle-btn" onclick="toggleDescription('{{ loop.index }}')">Show Description, double click</button>
+            <p id="description-{{ loop.index }}" class="description">{{ job.description }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    <script>
+        function toggleDescription(id) {
+            const desc = document.getElementById('description-' + id);
+            if (desc.style.display === 'none') {
+                desc.style.display = 'block';
+            } else {
+                desc.style.display = 'none';
+            }
+        }
+    </script>
+
+    <h2>Job Summary using Data Exploration & Preparation</h2>
+    <ul>
+        <li>Average Budget: {{ summary }}</li>
+    </ul>
+</body>
+</html>

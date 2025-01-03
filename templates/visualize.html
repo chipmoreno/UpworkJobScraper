@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Budget Visualization</title>
+</head>
+<body>
+    <h1>Job Budget Visualization</h1>
+    <pre id="ascii-bars"></pre>
+
+    <script>
+        var jobs_data = "{{ job_str }}";
+        var asciiBars = '';
+        var jobs = job_str.split('|');
+        
+        jobs.forEach(function(job) {
+            if (job) {
+                var jobParts = job.split(':');
+                var title = jobParts[0];
+                var budget = parseInt(jobParts[1]);
+                asciiBars += title + ': ' + '#'.repeat(budget) + '\n';
+            }
+        });
+
+        document.getElementById('ascii-bars').textContent = asciiBars;
+    </script>
+</body>
+</html>

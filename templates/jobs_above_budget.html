@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs Above Budget</title>
+</head>
+<body>
+    <h1>Jobs Above the Budget Threshold</h1>
+
+    <ul>
+        {% if jobs %}
+            {% for job in jobs %}
+                <li>{{ job['title'] }} - Budget: ${{ job['budget'] }}</li>
+            {% endfor %}
+        {% else %}
+            <p>No jobs found above this budget threshold.</p>
+        {% endif %}
+    </ul>
+
+    <a href="/">Back to search</a>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accuracy Check</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Accuracy Check - Raw Job Data</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Job ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Budget</th>
+                <th>Elapsed</th>
+                <th>Experience Level</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job_id, job in job_data.items() %}
+            <tr>
+                <td>{{ job_id }}</td>
+                <td>{{ job.title }}</td>
+                <td>{{ job.description }}</td>
+                <td>{{ job.budget }}</td>
+                <td>{{ job.elapsed }}</td>
+                <td>{{ job.experience_level }}</td>
+                <td><a href="{{ job.link }}" target="_blank">View Job</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
