@@ -6,9 +6,20 @@ from featurizing import *
 from data_exploration import *
 from flask import jsonify
 import json
+import os
 from model import *
 from evaluate_accuracy import *
 from time import time
+seen_jobs_file = 'seen_jobs.txt'
+def load_seen_jobs():
+    if os.path.exists(seen_jobs_file):
+        with open(seen_jobs_file, 'r') as f:
+            return set(f.read().splitlines())  # Read lines and convert to a set
+    return set()
+
+def save_seen_jobs(seen_jobs):
+    with open(seen_jobs_file, 'w') as f:
+        f.write("\n".join(seen_jobs))
 
 
 app = Flask(__name__)
@@ -171,10 +182,13 @@ def accuracy():
     # Render the accuracy page and pass the job data for inspection
     return render_template('accuracy.html', job_data=job_data)
 
+
+seen_jobs = set()
+
 @app.route('/scrape', methods=['GET', 'POST'])
 def scrape():
     global default_job_data
-
+    seen_jobs = load_seen_jobs()
     # Initialize scraped_data to an empty list in case of GET request
     scraped_data = []
 
@@ -188,10 +202,14 @@ def scrape():
             return h * 3600 + m * 60 + s
 
         # Scrape data for each keyword
-        for keyword in keyword_list:
-            scraped_data.extend(scraper(keyword))  # Pass each keyword to the scraper function and extend the list with the results
-            scraped_data.sort(key=lambda job: elapsed_to_seconds(job['elapsed']))
-
+        predefined_keywords = ["Java", "Python", "Spring", "Javascript", "C++", "Copywriting", "Web Scraping", "JSON"]
+        for keyword in predefined_keywords:
+            for job in scraper(keyword):
+                if job['link'] not in seen_jobs:
+                    scraped_data.append(job)
+                    seen_jobs.add(job['link'])
+                    scraped_data.sort(key=lambda job: elapsed_to_seconds(job['elapsed']))
+        save_seen_jobs(seen_jobs)
         overwrite = request.form.get('overwrite')  # 'yes' or 'no'
         if overwrite == "no":
             return redirect('/')  # If not overwriting, redirect to the index
