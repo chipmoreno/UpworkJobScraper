@@ -183,9 +183,14 @@ def scrape():
         keyword_list = [keyword.strip() for keyword in keywords.split(',')]  # Split by comma and strip whitespace
         scraped_data = []
 
+        def elapsed_to_seconds(elapsed):
+            h, m, s = map(int, elapsed.split(":"))
+            return h * 3600 + m * 60 + s
+
         # Scrape data for each keyword
         for keyword in keyword_list:
             scraped_data.extend(scraper(keyword))  # Pass each keyword to the scraper function and extend the list with the results
+            scraped_data.sort(key=lambda job: elapsed_to_seconds(job['elapsed']))
 
         overwrite = request.form.get('overwrite')  # 'yes' or 'no'
         if overwrite == "no":
