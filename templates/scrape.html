@@ -22,6 +22,12 @@
         {% endfor %}
     </ul>
 
+    <form method="POST" action="/scrape">
+        <label for="keywords">Enter Keywords (separate by commas):</label>
+        <input type="text" id="keywords" name="keywords">
+        <input type="submit" value="Scrape">
+    </form>
+    
     <form method="POST">
         <p>Do you want to overwrite the default values with scraped data?</p>
         <button type="submit" name="overwrite" value="yes">Yes</button>

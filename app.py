@@ -174,11 +174,23 @@ def accuracy():
 @app.route('/scrape', methods=['GET', 'POST'])
 def scrape():
     global default_job_data
-    scraped_data = scraper()
+
+    # Initialize scraped_data to an empty list in case of GET request
+    scraped_data = []
+
     if request.method == 'POST':
+        keywords = request.form.get('keywords')  # Get the keywords from the form
+        keyword_list = [keyword.strip() for keyword in keywords.split(',')]  # Split by comma and strip whitespace
+        scraped_data = []
+
+        # Scrape data for each keyword
+        for keyword in keyword_list:
+            scraped_data.extend(scraper(keyword))  # Pass each keyword to the scraper function and extend the list with the results
+
         overwrite = request.form.get('overwrite')  # 'yes' or 'no'
         if overwrite == "no":
-            return redirect('/')
+            return redirect('/')  # If not overwriting, redirect to the index
+
         if overwrite == "yes":
             # Loop through scraped data and update the dictionary
             for i, job_data in enumerate(scraped_data, start=1):
@@ -192,11 +204,16 @@ def scrape():
                     "link": job_data["link"],
                     "experience_level": job_data["experience_level"]
                 }
-            
+
             print("Job data has been overwritten.")
+        
         else:
             print("Job data has not been overwritten.")
-        return redirect('/')  # Redirect to index
+        
+        # Render the scrape page with the scraped data
+        return render_template('scrape.html', scraped_data=scraped_data, default_data=default_job_data)
+
+    # Render the template with scraped_data even if it's empty
     return render_template('scrape.html', scraped_data=scraped_data, default_data=default_job_data)
 
 @app.route('/dashboard')

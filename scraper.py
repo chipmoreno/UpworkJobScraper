@@ -3,9 +3,9 @@ from bs4 import BeautifulSoup
 import time
 from pprint import pprint
 
-def scraper():
+def scraper(keyword):
     driver = webdriver.Chrome()
-    driver.get('https://www.upwork.com/nx/search/jobs/?q=copywriting')
+    driver.get(f'https://www.upwork.com/nx/search/jobs/?q={keyword}')
     time.sleep(5)
     html = driver.page_source
     driver.quit()
